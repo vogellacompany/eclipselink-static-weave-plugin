@@ -74,65 +74,96 @@ The EclipseLink logging information is always given in Maven INFO loglevel.
 Happy weaving!
 
 
-### Copied wiki page as it may be removed by the Eclipse Foundation:
+# Copied wiki page as it may be removed by the Eclipse Foundation:
 
-# Configuring Static Weaving
+| `classpath` | The classpath that contains classes referenced by the persistence unit. This can be a nested element that contains one or more `pathelement` elements. | None | Optional |
+Kopieren
+Execute the weave Ant task. For example:
+ant weaving
+Kopieren
+Use the Maven plugin
+Use the EclipseLink Static Weaving Maven plugin, as follows:
 
-Use static weaving to weave all applicable class files at build time so that you can deliver pre-woven class files. Consider this option to weave all applicable class files at build time so that you can deliver prewoven class files. By doing so, you can improve application performance by eliminating the runtime weaving step required by dynamic weaving (see [Configuring Dynamic Weaving](EclipseLink/UserGuide/JPA/Advanced_JPA_Development/Performance/Weaving/Dynamic Weaving)).
+Add the following plugin configuration to your project’s pom.xml file:
+<plugin>
+    <groupId>org.eclipse.persistence</groupId>
+    <artifactId>eclipselink-staticweave-maven-plugin</artifactId>
+    <version>2.7.9</version>
+    <executions>
+        <execution>
+            <phase>process-classes</phase>
+            <goals>
+                <goal>weave</goal>
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <persistenceXMLLocation>META-INF/persistence.xml</persistenceXMLLocation>
+        <logLevel>FINE</logLevel>
+        <logFile>staticweave.log</logFile>
+    </configuration>
+</plugin>
+Kopieren
+Execute the Maven build command. For example:
+mvn clean install
+Kopieren
+For more information about the EclipseLink Static Weaving Maven plugin, see https://github.com/eclipse/eclipselink-staticweave-maven-plugin.
 
-In addition, consider using static weaving to weave in Java environments where you cannot configure an agent.
+Use the Command Line
+Use the StaticWeave command-line utility, as follows:
 
-## Prerequisite: Organize/Package Files
+Set up your environment to include the following JAR files in your classpath:
+eclipselink.jar
+javax.persistence_2.1.jar
+Any other JAR files that your persistence unit depends on
+Execute the StaticWeave command with the appropriate options. For example:
+java org.eclipse.persistence.tools.weaving.jpa.StaticWeave -persistenceinfo c:\myjar-containing-persistenceinfo.jar -classpath c:\myjar-dependent.jar -loglevel FINE -logfile staticweave.log c:\myjar.jar c:\wovenmyjar.jar
+Kopieren
+For more information about the StaticWeave command-line utility and its options, see https://www.eclipse.org/eclipselink/documentation/2.7/concepts/app_dev007.htm.
 
-Prior to weaving, you must package your persistence unit in either of the following configurations: 
 
-* JAR file, as specified in the JPA 2.0 specification.[^1^][1]
 
-* Exploded directory structure
+| `classpath` | The classpath that contains classes referenced by the persistence unit. This can be a nested element that contains one or more `pathelement` elements. | None | Optional |
+Kopieren
+Execute the weave Ant task. For example:
+ant weaving
+Kopieren
+Use the Maven plugin
+Use the EclipseLink Static Weaving Maven plugin, as follows:
 
-In both cases, the requirements are:
+Add the following plugin configuration to your project’s pom.xml file:
+<plugin>
+    <groupId>org.eclipse.persistence</groupId>
+    <artifactId>eclipselink-staticweave-maven-plugin</artifactId>
+    <version>2.7.9</version>
+    <executions>
+        <execution>
+            <phase>process-classes</phase>
+            <goals>
+                <goal>weave</goal>
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <persistenceXMLLocation>META-INF/persistence.xml</persistenceXMLLocation>
+        <logLevel>FINE</logLevel>
+        <logFile>staticweave.log</logFile>
+    </configuration>
+</plugin>
+Kopieren
+Execute the Maven build command. For example:
+mvn clean install
+Kopieren
+For more information about the EclipseLink Static Weaving Maven plugin, see https://github.com/eclipse/eclipselink-staticweave-maven-plugin.
 
-* Classes must be stored at the base in directories based on their package structure 
-* There must be a `META-INF` directory that contains the `persistence.xml` file. <br/>Note: You can use the `persistenceinfo` setting on the `weave` Ant task, as described in the [EclipseLink weave Ant Task Attributes](#table-19-31) table, below, to specify a different location.
+Use the Command Line
+Use the StaticWeave command-line utility, as follows:
 
-For example, when using a JAR file, `mypersitenceunit.jar` could contain the following:
-* `mypackage/MyEntity1.class`
-* `mypackage/MyEntity2.class`
-* `mypackage2/MyEntity3.class`
-* `META-INF/persistence.xml`
-
-For example, If your base directory is c:/classes, the exploded directory structure would look as follows:
-
-* `c:/classes/mypackage/MyEntity1.class`
-* `c:/classes/mypackage/MyEntity2.class`
-* `c:/classes/mypackage2/MyEntity3.class`
-* `c:/classes/META-INF/persistence.xml`
-
-## Step 1: Execute the Static Weaver
-
-Execute the static weaver in one of the following ways: 
-
-* [Use the weave Ant Task](#use-the-weave-ant-task)
-* [Use the Maven plugin](#use-the-maven-plugin)
-* [Use the Command Line](#use-the-command-line)
-
-### Use the weave Ant Task
-
-Use the `weave` ant task, as follows:
-
-1. Configure the `weave` Ant task in your build script, as this example shows. The [EclipseLink weave Ant Task Attributes](#table-19-31) table lists the attributes of this task.<br>
-**Example 19-37** EclipseLink weave Ant Task
-```xml
- <target name="define.task" description="New task definition for EclipseLink static weaving"> 
-     <taskdef name="weave" classname="org.eclipse.persistence.tools.weaving.jpa.StaticWeaveAntTask"/>
- </target>
- <target name="weaving" description="perform weaving" depends="define.task">
-     <weave  source="c:\myjar.jar"
-             target="c:\wovenmyjar.jar"
-             persistenceinfo="c:\myjar-containing-persistenceinfo.jar">
-         <classpath>
-             <pathelement path="c:\myjar-dependent.jar"/>
-         </classpath>
- 
-     </weave>
- </target>
+Set up your environment to include the following JAR files in your classpath:
+eclipselink.jar
+javax.persistence_2.1.jar
+Any other JAR files that your persistence unit depends on
+Execute the StaticWeave command with the appropriate options. For example:
+java org.eclipse.persistence.tools.weaving.jpa.StaticWeave -persistenceinfo c:\myjar-containing-persistenceinfo.jar -classpath c:\myjar-dependent.jar -loglevel FINE -logfile staticweave.log c:\myjar.jar c:\wovenmyjar.jar
+Kopieren
+For more information about the StaticWeave command-line utility and its options, see https://www.eclipse.org/eclipselink/documentation/2.7/concepts/app_dev007.htm.
